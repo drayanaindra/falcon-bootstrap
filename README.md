@@ -1,5 +1,7 @@
 # LITE API DIR
 
+LITE-API-DIR is bootstrapping project directory for micro framework [falcon](http://falconframework.org/), everybody can develop simple API. And what you need for this ? Just basic skill of Python, and read more documentation. In this project, i create simple CRUD apps **contact**. Let's see what will you can do with this project.
+
 preparing to using this project
 
 - clone this project
