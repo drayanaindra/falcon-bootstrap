@@ -58,34 +58,38 @@ class AppMember(object):
             resp.body = json.dumps({'message': 'update data success!'})
         else:
             if result_json.get('username'):
-                member = Member.objects.create(
-                    username=result_json.get('username'),
-                    email=result_json.get('email'),
-                    name=result_json.get('name')
-                )
+                try:
+                    get_member = Member.objects.get(username=result_json.get('username'))
+                    raise falcon.HTTPForbidden("error", "username {u} already exist!".format(u=get_member.username))
+                except Member.DoesNotExist:
+                    member = Member.objects.create(
+                        username=result_json.get('username'),
+                        email=result_json.get('email'),
+                        name=result_json.get('name')
+                    )
 
-                profile_member = ProfileMember()
-                profile_member.user = member
-                profile_member.address = result_json.get('address')
-                profile_member.save()
+                    profile_member = ProfileMember()
+                    profile_member.user = member
+                    profile_member.address = result_json.get('address')
+                    profile_member.save()
 
-                user = str(profile_member.user.name)
-            else:
-                profile_member = ProfileMember()
-                profile_member.name = result_json.get('name')
-                profile_member.address = result_json.get('address')
-                profile_member.email = result_json.get('email')
-                profile_member.save()
+                    user = str(profile_member.user.name)
+                else:
+                    profile_member = ProfileMember()
+                    profile_member.name = result_json.get('name')
+                    profile_member.address = result_json.get('address')
+                    profile_member.email = result_json.get('email')
+                    profile_member.save()
 
-                user = str(profile_member.name)
+                    user = str(profile_member.name)
 
-            data = {
-                'status': 'success',
-                'message': "member {u} created!".format(u=user)
-            }
+                data = {
+                    'status': 'success',
+                    'message': "member {u} created!".format(u=user)
+                }
 
-            resp.status = falcon.HTTP_200
-            resp.body = json.dumps(data)
+                resp.status = falcon.HTTP_200
+                resp.body = json.dumps(data)
 
     def on_get(self, req, resp, **kwargs):
         action = kwargs.get('action')
@@ -137,7 +141,7 @@ class AppMember(object):
                 for item in list_member:
                     if item.user:
                         data = {
-                            'id': str(item.id),
+                            'id': str(item.user.id),
                             'name': item.user.name,
                             'username': item.user.username,
                             'address': item.address,
