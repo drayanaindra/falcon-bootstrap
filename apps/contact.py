@@ -101,7 +101,7 @@ class AppMember(object):
                 mempro_id = kwargs.get('id')
                 get_mempro = ProfileMember.objects.get(id=mempro_id)
             except ProfileMember.DoesNotExist:
-                raise falcon.HTTPMissingParam('error', 'id not validate')
+                get_mempro = ProfileMember.objects.get(user=id_data)
 
             if get_mempro.user:
                 list_data = {
